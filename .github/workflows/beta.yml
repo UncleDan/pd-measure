@@ -1,0 +1,82 @@
+# beta.yml by Daniele Lolli (UncleDan) feat. Claude AI - Release 1.0.0 - 2026-10-24 14-42-28
+# Build beta a ogni push su main (e verifica sulle pull request).
+# Su main aggiorna la pre-release "beta" con l'APK (id it.uncledan.pdmeasure.beta,
+# installabile accanto alla versione stabile). Firmata con la chiave release se i secret
+# sono presenti, altrimenti con la chiave debug del runner.
+name: Beta
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: beta-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  beta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Versione
+        run: |
+          VN=$(grep -E '^\s*versionName\s*=' app/build.gradle.kts | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
+          echo "VN=$VN" >> "$GITHUB_ENV"
+          echo "SHORT=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          echo "STAMP=$(TZ=Europe/Rome date +%Y%m%d-%H%M)" >> "$GITHUB_ENV"
+
+      - name: Keystore (opzionale)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "PDM_KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Nessun keystore: beta firmata con chiave debug (aggiornamenti richiedono disinstallazione)"
+          fi
+
+      - name: Test e build
+        env:
+          PDM_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          PDM_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          PDM_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon testDebugUnitTest assembleBeta
+
+      - name: Prepara file
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/beta/app-beta.apk "dist/PD-Measure-$VN-beta_$STAMP-$SHORT.apk"
+
+      - name: Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PD-Measure-${{ env.VN }}-beta-${{ env.SHORT }}
+          path: dist/*.apk
+
+      - name: Pre-release "beta"
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete beta --cleanup-tag --yes || true
+          gh release create beta dist/*.apk \
+            --prerelease \
+            --target "$GITHUB_SHA" \
+            --title "Beta $VN ($STAMP, $SHORT)" \
+            --notes "Build automatica dal commit $GITHUB_SHA. Non per uso in produzione."

@@ -1,0 +1,14 @@
+.gradle/
+build/
+/local.properties
+.idea/
+*.iml
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+*.jks
+*.keystore
+keys/
+# Modello MediaPipe: scaricato automaticamente in fase di build
+app/src/main/assets/face_landmarker.task

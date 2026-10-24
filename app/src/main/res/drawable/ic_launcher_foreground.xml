@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- quota tra le pupille -->
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="2" android:strokeLineCap="round"
+        android:pathData="M36,30 L36,50 M72,30 L72,50" />
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="3" android:strokeLineCap="round"
+        android:strokeLineJoin="round" android:fillColor="#00000000"
+        android:pathData="M36,36 L72,36 M41,32 L36,36 L41,40 M67,32 L72,36 L67,40" />
+    <!-- occhi -->
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="3" android:strokeLineJoin="round"
+        android:fillColor="#00000000"
+        android:pathData="M23,58 Q36,44 49,58 Q36,72 23,58 Z M59,58 Q72,44 85,58 Q72,72 59,58 Z" />
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M36,58 m-6.5,0 a6.5,6.5 0 1,0 13,0 a6.5,6.5 0 1,0 -13,0 M72,58 m-6.5,0 a6.5,6.5 0 1,0 13,0 a6.5,6.5 0 1,0 -13,0" />
+    <path android:fillColor="#00796B"
+        android:pathData="M36,58 m-2.8,0 a2.8,2.8 0 1,0 5.6,0 a2.8,2.8 0 1,0 -5.6,0 M72,58 m-2.8,0 a2.8,2.8 0 1,0 5.6,0 a2.8,2.8 0 1,0 -5.6,0" />
+</vector>
