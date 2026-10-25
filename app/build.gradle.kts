@@ -1,4 +1,4 @@
-// app/build.gradle.kts by Daniele Lolli (UncleDan) feat. Claude AI - Release 1.0.0 - 2026-10-24 14-42-28
+// app/build.gradle.kts by Daniele Lolli (UncleDan) feat. Claude AI - Release 1.1.0 - 2026-10-24 21-02-56
 import java.net.URI
 
 plugins {
@@ -21,8 +21,8 @@ android {
         targetSdk = 35
         // VERSIONE: valori letterali (leggibili staticamente, es. da F-Droid).
         // Regola: versionCode = major*10000 + minor*100 + patch (verificata in build).
-        versionCode = 10000
-        versionName = "1.0.0"
+        versionCode = 10100
+        versionName = "1.1.0"
         manifestPlaceholders["appLabel"] = "PD Measure"
     }
 

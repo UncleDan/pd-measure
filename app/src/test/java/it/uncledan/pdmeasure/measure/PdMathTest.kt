@@ -66,4 +66,37 @@ class PdMathTest {
         assertNull(PdMath.farFactor(50.0))
         assertEquals(413.5 / 400.0, PdMath.farFactor(400.0)!!, 1e-9)
     }
+
+    private fun m(pdNear: Double, dist: Double?) =
+        PdMeasurement(pdNear, 0.5, dist, Method.IRIS, 45, 11.7)
+
+    @Test
+    fun attemptsMeanAndTrim() {
+        val three = PdMath.combineAttempts(listOf(m(60.0, null), m(61.0, null), m(62.0, null)))
+        assertEquals(61.0, three.pdNearMm, 1e-9)
+        assertEquals(2.0, three.spreadMm!!, 1e-9)
+        assertEquals(135, three.samples)
+
+        val five = PdMath.combineAttempts(listOf(m(50.0, null), m(60.0, null), m(61.0, null), m(62.0, null), m(70.0, null)))
+        assertTrue(five.trimmed)
+        assertEquals(61.0, five.pdNearMm, 1e-9) // 50 e 70 esclusi
+        assertEquals(20.0, five.spreadMm!!, 1e-9)
+
+        val one = PdMath.combineAttempts(listOf(m(60.0, null)))
+        assertNull(one.spreadMm)
+    }
+
+    @Test
+    fun allPdValues() {
+        val set = PdSet.from(m(60.0, 400.0))
+        val far = 60.0 * 413.5 / 400.0
+        assertEquals(far, set.far.bino, 1e-9)
+        assertEquals(far * 388.0 / 413.5, set.reading.bino, 1e-9)
+        assertEquals(far * 638.0 / 663.5, set.intermediate.bino, 1e-9)
+        assertTrue(set.reading.bino < set.intermediate.bino && set.intermediate.bino < set.far.bino)
+        val form = PdTriple(70.4, 35.3, 35.1).forForm()
+        assertEquals(70.5, form.bino, 0.0)
+        assertEquals(35.5, form.right, 0.0)
+        assertEquals(35.0, form.left, 0.0)
+    }
 }

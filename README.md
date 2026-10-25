@@ -5,10 +5,11 @@ App Android per misurare la **distanza interpupillare (PD)** con la fotocamera f
 [![Beta](https://github.com/UncleDan/pd-measure/actions/workflows/beta.yml/badge.svg)](https://github.com/UncleDan/pd-measure/actions/workflows/beta.yml)
 [![Release](https://github.com/UncleDan/pd-measure/actions/workflows/release.yml/badge.svg)](https://github.com/UncleDan/pd-measure/actions/workflows/release.yml)
 
-- **Metodo iride** — nessun oggetto: usa come riferimento il diametro orizzontale dell'iride (11,7 mm in media, oppure il valore calibrato). Media mediana su 45 fotogrammi validi.
+- **Metodo iride** — nessun oggetto: usa come riferimento il diametro orizzontale dell'iride (11,7 mm in media, oppure il valore calibrato). Ogni tentativo è la mediana di 45 fotogrammi validi; si possono fare 1, 3 o 5 tentativi (media, con esclusione degli estremi su 5) e l'app mostra lo scarto tra i tentativi.
 - **Metodo carta** — una carta formato ISO/IEC 7810 ID-1 (85,60 × 53,98 mm) appoggiata sulla fronte; si allineano due linee ai bordi della carta. Più preciso, e può **calibrare** il metodo iride per le misure successive.
 - **PD da lontano** — la PD misurata a 30–50 cm è "da vicino" (occhi convergenti); viene convertita con `PD_lontano = PD_vicino × (D + 13,5) / D`, con D stimata dalla focale della fotocamera.
-- **Mono PD** destra/sinistra rispetto al ponte nasale.
+- **Tutti i PD**: lontano, intermedio (65 cm), lettura (40 cm) e misurata, binoculari e monoculari OD/OS. Intermedio e lettura sono riferiti al piano della lente: `PD = PD_lontano × (D − 12) / (D + 13,5)`.
+- **Guida ai moduli d'ordine**: indica quale valore inserire (campo unico, due numeri OD/OS, progressive, lettura), arrotondato a 0,5 mm.
 - **Privacy**: nessun permesso internet, nessuna immagine salvata. Vedi [PRIVACY.md](PRIVACY.md).
 
 > Misura indicativa, non è un dispositivo medico.
@@ -33,7 +34,7 @@ Serve JDK 17. Al primo build il task `downloadFaceModel` scarica il modello Medi
 
 ## Versioni
 
-`versionName` = `MAJOR.MINOR.PATCH`, `versionCode` = `MAJOR*10000 + MINOR*100 + PATCH` (es. 1.0.0 → 10000).
+`versionName` = `MAJOR.MINOR.PATCH`, `versionCode` = `MAJOR*10000 + MINOR*100 + PATCH` (es. 1.1.0 → 10100).
 I valori sono letterali in `app/build.gradle.kts` e il build fallisce se non sono coerenti.
 
 ## GitHub Actions

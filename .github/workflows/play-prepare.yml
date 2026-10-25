@@ -1,4 +1,4 @@
-# play-prepare.yml by Daniele Lolli (UncleDan) feat. Claude AI - Release 1.0.0 - 2026-10-24 14-42-28
+# play-prepare.yml by Daniele Lolli (UncleDan) feat. Claude AI - Release 1.1.0 - 2026-10-24 21-02-56
 # Prepara il pacchetto per Google Play: AAB firmato + note di versione + icona 512.
 # Avvio manuale; il caricamento su Play Console resta manuale (vedi docs/PUBBLICAZIONE_GOOGLE_PLAY.md).
 name: Play prepare

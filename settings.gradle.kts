@@ -1,4 +1,4 @@
-// settings.gradle.kts by Daniele Lolli (UncleDan) feat. Claude AI - Release 1.0.0 - 2026-10-24 14-42-28
+// settings.gradle.kts by Daniele Lolli (UncleDan) feat. Claude AI - Release 1.1.0 - 2026-10-24 21-02-56
 pluginManagement {
     repositories {
         google()

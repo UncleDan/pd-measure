@@ -1,4 +1,4 @@
-# beta.yml by Daniele Lolli (UncleDan) feat. Claude AI - Release 1.0.0 - 2026-10-24 14-42-28
+# beta.yml by Daniele Lolli (UncleDan) feat. Claude AI - Release 1.1.0 - 2026-10-24 21-02-56
 # Build beta a ogni push su main (e verifica sulle pull request).
 # Su main aggiorna la pre-release "beta" con l'APK (id it.uncledan.pdmeasure.beta,
 # installabile accanto alla versione stabile). Firmata con la chiave release se i secret

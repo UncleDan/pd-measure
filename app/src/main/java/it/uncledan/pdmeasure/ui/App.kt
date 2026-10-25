@@ -74,7 +74,6 @@ fun PdMeasureApp() {
             Screen.Info -> InfoScreen(onBack = goHome)
             is Screen.Result -> ResultScreen(
                 measurement = s.measurement,
-                prefs = prefs,
                 onRepeat = {
                     screen = if (s.measurement.method == Method.CARD) Screen.Card else Screen.Iris
                 },

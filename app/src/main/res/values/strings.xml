@@ -9,7 +9,6 @@
     <string name="calibration_none">Iris reference: average value %1$s mm (not calibrated)</string>
     <string name="calibration_value">Iris reference: %1$s mm (calibrated with a card)</string>
     <string name="calibration_reset">Reset calibration</string>
-    <string name="far_correction_label">Show distance PD (far vision) as main result</string>
     <string name="info_title">About</string>
     <string name="back">Back</string>
     <string name="home">Home</string>
@@ -25,7 +24,6 @@
     <string name="hint_too_close">Move back a little (≈ %1$s cm, best 30–50 cm)</string>
     <string name="iris_instructions">Remove your glasses, hold the phone at eye level 30–50 cm away and look straight into the front camera, not at the screen.</string>
     <string name="start_measure">Start measurement</string>
-    <string name="measuring">Measuring… %1$d/%2$d</string>
     <string name="cancel">Cancel</string>
     <string name="card_instructions">Remove your glasses. Press a standard card flat and horizontal on your forehead, just above the eyebrows, look into the camera and take the photo.</string>
     <string name="capture">Take photo</string>
@@ -40,14 +38,10 @@
     <string name="calibration_out_of_range">Measured iris %1$s mm is outside the plausible range: check the lines. Calibration not available.</string>
     <string name="confirm">Confirm</string>
     <string name="result_title">Result</string>
-    <string name="result_pd_far">Distance PD (far vision)</string>
-    <string name="result_pd_measured">Measured PD</string>
-    <string name="result_pd_near">Near PD %1$s mm (measured at ≈ %2$s cm)</string>
     <string name="result_mono">Mono PD: right %1$s mm · left %2$s mm</string>
-    <string name="result_method_iris">Method: iris, %1$d samples, reference %2$s mm</string>
+    <string name="result_method_iris">Method: iris, %1$d frames, reference %2$s mm</string>
     <string name="result_method_card">Method: card</string>
     <string name="result_disclaimer">Indicative measurement, not a medical device. For prescription lenses rely on the measurement taken by your optician.</string>
-    <string name="share_text">%1$s: %2$s mm (mono R %3$s / L %4$s mm), measured with PD Measure</string>
     <string name="repeat">Repeat</string>
     <string name="share">Share</string>
     <string name="info_version">Version %1$s</string>
@@ -56,4 +50,34 @@
     <string name="info_privacy_title">Privacy</string>
     <string name="info_privacy_body">The app has no internet permission. Camera frames are analysed in memory and never saved or sent anywhere.</string>
     <string name="info_author">By Daniele Lolli (UncleDan)</string>
+    <string name="measuring">Attempt %1$d/%2$d · frames %3$d/%4$d</string>
+    <string name="attempts_label">Attempts:</string>
+    <string name="attempts_hint">Each attempt is the median of 45 frames. Attempts are averaged; with 5 attempts the highest and lowest are discarded.</string>
+    <string name="attempt_value">#%1$d %2$s mm</string>
+    <string name="between_instructions">Look away, reposition the phone and press Continue for attempt %1$d of %2$d.</string>
+    <string name="continue_label">Continue</string>
+    <string name="result_main_label">Distance PD (binocular)</string>
+    <string name="result_not_corrected">Camera distance not available: values are not corrected for convergence (distance PD is usually 2–3 mm larger).</string>
+    <string name="consistency_attempts">%1$d attempts: %2$s mm</string>
+    <string name="consistency_good">Spread %1$s mm: consistent measurement</string>
+    <string name="consistency_ok">Spread %1$s mm: acceptable</string>
+    <string name="consistency_bad">Spread %1$s mm: inconsistent, repeat in better light or calibrate with the card</string>
+    <string name="consistency_trimmed">Highest and lowest attempts excluded from the average.</string>
+    <string name="table_title">All PD values (mm)</string>
+    <string name="col_bino">PD</string>
+    <string name="col_od">OD (R)</string>
+    <string name="col_os">OS (L)</string>
+    <string name="row_far">Distance</string>
+    <string name="row_intermediate">Intermediate 65 cm</string>
+    <string name="row_reading">Reading 40 cm</string>
+    <string name="row_measured">Measured at %1$s cm</string>
+    <string name="row_measured_nodist">Measured</string>
+    <string name="table_note">Intermediate and reading values refer to the lens plane (12 mm vertex distance). The measured row is the raw value with the eyes converging on the camera. OD = right eye, OS = left eye.</string>
+    <string name="form_title">What to enter in an online order form</string>
+    <string name="form_single">Single «Pupillary distance (PD)» field: %1$s</string>
+    <string name="form_dual">«Two PD numbers» (monocular): OD %1$s · OS %2$s</string>
+    <string name="form_progressive">Progressive or multifocal lenses: enter the two monocular numbers if the form allows it. Always use distance values: the lab calculates the near zone from the addition (ADD).</string>
+    <string name="form_reading">Reading-only glasses: only if the form explicitly asks for the near PD, enter %1$s (OD %2$s · OS %3$s). Otherwise enter the distance PD and select reading use.</string>
+    <string name="form_rounding">Values rounded to 0.5 mm; OD + OS equals the binocular PD.</string>
+    <string name="share_text">PD Measure\nDistance PD: %1$s mm (OD %2$s / OS %3$s)\nIntermediate PD 65 cm: %4$s mm\nReading PD 40 cm: %5$s mm (OD %6$s / OS %7$s)</string>
 </resources>

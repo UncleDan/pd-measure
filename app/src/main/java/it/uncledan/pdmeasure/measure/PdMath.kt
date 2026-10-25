@@ -14,7 +14,14 @@ data class PdMeasurement(
     val samples: Int,
     /** Riferimento usato: diametro iride (metodo iride) o larghezza carta (metodo carta). */
     val referenceMm: Double,
+    /** PD (da lontano se disponibile) di ciascun tentativo, se la misura ne combina più d'uno. */
+    val attemptsMm: List<Double> = emptyList(),
+    /** Con 5 o più tentativi il più alto e il più basso sono esclusi dalla media. */
+    val trimmed: Boolean = false,
 ) {
+    /** Scarto tra tentativo massimo e minimo. */
+    val spreadMm: Double? get() = if (attemptsMm.size > 1) attemptsMm.max() - attemptsMm.min() else null
+
     val farFactor: Double? get() = distanceMm?.let { PdMath.farFactor(it) }
     val pdFarMm: Double? get() = farFactor?.let { pdNearMm * it }
 
@@ -30,6 +37,10 @@ object PdMath {
     const val DEFAULT_IRIS_MM = 11.7
     /** Distanza approssimativa del centro di rotazione dietro l'apice corneale. */
     const val EYE_ROTATION_CENTER_MM = 13.5
+    /** Distanza apice corneale - lente (vertice) per la centratura delle lenti. */
+    const val VERTEX_DISTANCE_MM = 12.0
+    const val READING_DISTANCE_MM = 400.0
+    const val INTERMEDIATE_DISTANCE_MM = 650.0
     /** Intervallo plausibile per la calibrazione dell'iride. */
     val PLAUSIBLE_IRIS_MM = 10.2..13.2
     /** Intervallo di distanza in cui la correzione vicino→lontano è affidabile. */
@@ -45,6 +56,40 @@ object PdMath {
      */
     fun farFactor(distanceMm: Double): Double? =
         if (distanceMm in VALID_DISTANCE_MM) (distanceMm + EYE_ROTATION_CENTER_MM) / distanceMm else null
+
+    /**
+     * PD sul piano della lente fissando a distanza D (centratura per vicino/intermedio).
+     * Le linee di sguardo partono dai centri di rotazione (distanti PD_lontano) e convergono sul punto:
+     * sul piano della lente (vertice v davanti alla cornea) PD = PD_lontano × (D − v) / (D + r)
+     */
+    fun nearPdAtLensPlane(pdFarMm: Double, distanceMm: Double): Double =
+        pdFarMm * (distanceMm - VERTEX_DISTANCE_MM) / (distanceMm + EYE_ROTATION_CENTER_MM)
+
+    /**
+     * Combina più tentativi indipendenti: media aritmetica; con 5 o più tentativi
+     * si escludono il valore più alto e quello più basso (media troncata).
+     */
+    fun combineAttempts(attempts: List<PdMeasurement>): PdMeasurement {
+        require(attempts.isNotEmpty())
+        val values = attempts.map { it.pd(far = true) }
+        if (attempts.size == 1) return attempts[0].copy(attemptsMm = values)
+        val sorted = attempts.sortedBy { it.pd(far = true) }
+        val trim = sorted.size >= 5
+        val used = if (trim) sorted.subList(1, sorted.size - 1) else sorted
+        val distances = used.mapNotNull { it.distanceMm }
+        return PdMeasurement(
+            pdNearMm = used.map { it.pdNearMm }.average(),
+            bridgeFraction = used.map { it.bridgeFraction }.average(),
+            distanceMm = if (distances.isEmpty()) null else distances.average(),
+            method = attempts.first().method,
+            samples = attempts.sumOf { it.samples },
+            referenceMm = attempts.first().referenceMm,
+            attemptsMm = values,
+            trimmed = trim,
+        )
+    }
+
+    fun roundHalf(v: Double): Double = Math.round(v * 2.0) / 2.0
 
     fun irisEstimate(g: FaceGeometry, irisMm: Double, focalPx: Double?): PdMeasurement {
         val mmPerPx = irisMm / g.irisPx
@@ -113,5 +158,41 @@ object CardGuess {
             xB = (cx + cardPx / 2f).coerceIn(0f, iw),
             crop = CropRect(left.toInt(), top.toInt(), cropW.toInt(), cropH.toInt()),
         )
+    }
+}
+
+/** Una PD binoculare con le due mono PD (OD = occhio destro, OS = occhio sinistro). */
+data class PdTriple(val bino: Double, val right: Double, val left: Double) {
+    /** Valori per i moduli: arrotondati a 0,5 mm, con OD + OS = binoculare. */
+    fun forForm(): PdTriple {
+        val b = PdMath.roundHalf(bino)
+        val r = PdMath.roundHalf(right)
+        return PdTriple(b, r, b - r)
+    }
+}
+
+/** Tutti i valori di PD ricavabili da una misura. */
+data class PdSet(
+    val far: PdTriple,
+    val intermediate: PdTriple,
+    val reading: PdTriple,
+    val measured: PdTriple,
+    val measuredDistanceMm: Double?,
+    /** false se manca la distanza: il valore "da lontano" non è corretto per la convergenza. */
+    val farCorrected: Boolean,
+) {
+    companion object {
+        fun from(m: PdMeasurement): PdSet {
+            val far = m.pdFarMm ?: m.pdNearMm
+            fun triple(b: Double) = PdTriple(b, b * m.bridgeFraction, b * (1.0 - m.bridgeFraction))
+            return PdSet(
+                far = triple(far),
+                intermediate = triple(PdMath.nearPdAtLensPlane(far, PdMath.INTERMEDIATE_DISTANCE_MM)),
+                reading = triple(PdMath.nearPdAtLensPlane(far, PdMath.READING_DISTANCE_MM)),
+                measured = triple(m.pdNearMm),
+                measuredDistanceMm = m.distanceMm,
+                farCorrected = m.pdFarMm != null,
+            )
+        }
     }
 }
